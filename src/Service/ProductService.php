@@ -25,6 +25,7 @@ class ProductService
         // Check cache first
         $cachedProduct = $this->cacheService->findProduct($id);
         if ($cachedProduct) {
+            $this->counterService->incrementSearchCount($id);
             return $cachedProduct;
         }
 

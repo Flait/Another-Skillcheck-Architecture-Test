@@ -1,7 +1,8 @@
 <?php
 
-namespace tests;
+namespace Controller;
 
+use App\Controller\ProductController;
 use App\Driver\ElasticDriver;
 use App\Driver\IElasticSearchDriver;
 use App\Driver\IMySQLDriver;
@@ -14,7 +15,7 @@ use App\Service\Counter\SimpleCounterService;
 use App\Service\ProductService;
 use PHPUnit\Framework\TestCase;
 
-class BigApplicationTest extends TestCase
+class ProductControllerTest extends TestCase
 {
     private string $cacheFile;
     private string $counterFile;
@@ -30,9 +31,13 @@ class BigApplicationTest extends TestCase
 
         // Clean up before each test
         if (file_exists($this->cacheFile)) {
-            unlink($this->cacheFile);
+            //unlink($this->cacheFile);
         }
         fopen($this->cacheFile, "w");
+        if (file_exists($this->counterFile)) {
+            //unlink($this->counterFile);
+        }
+        fopen($this->counterFile, "w");
         $this->elasticSearchDriver = new ElasticDriver();
         $this->mySQLDriver = new MySQLDriver();
         $this->cacheService = new SimpleCacheService($this->cacheFile);
@@ -48,25 +53,20 @@ class BigApplicationTest extends TestCase
             $this->counterService,
             '100'
         );
+        $controller = new ProductController($productService);
 
-        $product = $productService->findProductById('1');
-        $this->assertInstanceOf(Product::class, $product);
-        $this->assertEquals('1', $product->id);
+        $product = $controller->detail('1');
+        $this->assertEquals('{"id":"1"}', $product);
 
-        $productFromCache = $productService->findProductById('1');
-        $this->assertInstanceOf(Product::class, $productFromCache);
-        $this->assertEquals('1', $productFromCache->id);
+        $product = $controller->detail('1');
+        $this->assertEquals('{"id":"1"}', $product);
 
-        $product = $productService->findProductById('2');
-        $this->assertInstanceOf(Product::class, $product);
-        $this->assertEquals('2', $product->id);
-
-        $productFromCache = $productService->findProductById('2');
-        $this->assertInstanceOf(Product::class, $productFromCache);
-        $this->assertEquals('2', $productFromCache->id);
+        $product = $controller->detail('2');
+        $this->assertEquals('{"id":"2"}', $product);
+        $this->assertEquals(2, $this->counterService->getProductHit('1'));
     }
 
-    public function testFindProductByIdUsesMySQL(): void
+    public function testFindProductByIdUsesMySQLSearch(): void
     {
         $productService = new ProductService(
             $this->elasticSearchDriver,
@@ -75,29 +75,25 @@ class BigApplicationTest extends TestCase
             $this->counterService,
             '0'
         );
+        $controller = new ProductController($productService);
 
-        $product = $productService->findProductById('1');
-        $this->assertInstanceOf(Product::class, $product);
-        $this->assertEquals('1', $product->id);
+        $product = $controller->detail('1');
+        $this->assertEquals('{"id":"1"}', $product);
 
-        $productFromCache = $productService->findProductById('1');
-        $this->assertInstanceOf(Product::class, $productFromCache);
-        $this->assertEquals('1', $productFromCache->id);
+        $product = $controller->detail('1');
+        $this->assertEquals('{"id":"1"}', $product);
 
-        $product = $productService->findProductById('2');
-        $this->assertInstanceOf(Product::class, $product);
-        $this->assertEquals('2', $product->id);
-
-        $productFromCache = $productService->findProductById('2');
-        $this->assertInstanceOf(Product::class, $productFromCache);
-        $this->assertEquals('2', $productFromCache->id);
+        $product = $controller->detail('2');
+        $this->assertEquals('{"id":"2"}', $product);
+        $this->assertEquals(2, $this->counterService->getProductHit('1'));
     }
 
     protected function tearDown(): void
     {
         // Clean up after each test
         if (file_exists($this->cacheFile)) {
-           // unlink($this->cacheFile);
+            // unlink($this->cacheFile);
         }
     }
+
 }

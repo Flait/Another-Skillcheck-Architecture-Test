@@ -27,13 +27,29 @@ class SimpleCounterService implements ICounterService
                 $data = [];
             }
         }
-
         if (!isset($data[$id])) {
             $data[$id] = 0;
         }
-
-        $data[$id] += 1;
+        $data[$id] = $data[$id]+1;
 
         file_put_contents($this->counterFile, json_encode($data, JSON_PRETTY_PRINT));
+    }
+
+    public function getProductHit(string $id): int
+    {
+        $data = [];
+
+        if (file_exists($this->counterFile)) {
+            $fileContent = file_get_contents($this->counterFile);
+            if ($fileContent === false) {
+                throw new Exception('Could not get counter file');
+            }
+            $data = json_decode($fileContent, true);
+            if (!is_array($data)) {
+                $data = [];
+            }
+        }
+
+        return $data[$id] ?? 0;
     }
 }

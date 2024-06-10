@@ -7,10 +7,10 @@ This is skillcheck for some company, focus is on OOP being prepared to switch fo
 - Switch of datasource usage through env variable 
 - Simple file cache service with interface - ready to be changed for Redis
 - Count service that counts searches into file 
-- Application test
+- controller returning json + Application test for it 
+- MAX stan lvl
 
 **To be done:**
-- controller returning json
 - unit tests
 - coverage
 - document how to run tests locally
