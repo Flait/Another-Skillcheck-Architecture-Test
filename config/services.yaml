@@ -31,4 +31,5 @@ services:
             $elasticSearchDriver: '@App\Driver\ElasticSearchDriver'
             $mySQLDriver: '@App\Driver\MySQLDriver'
             $cacheService: '@App\Service\SimpleCacheService'
+            $counterService: '@App\Service\SimpleCounterService'
             $elasticSearchPercentage: '%env(ELASTIC_SEARCH_PERCENTAGE)%'

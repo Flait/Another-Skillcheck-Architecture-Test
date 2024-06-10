@@ -1,27 +1,32 @@
 <?php
 
-namespace App\Tests\Service;
+namespace tests;
 
 use App\Driver\ElasticDriver;
 use App\Driver\IElasticSearchDriver;
 use App\Driver\IMySQLDriver;
 use App\Driver\MySQLDriver;
-use App\Service\ICacheService;
-use App\Service\ProductService;
-use App\Service\SimpleCacheService;
-use PHPUnit\Framework\TestCase;
 use App\Entity\Product;
+use App\Service\cachce\ICacheService;
+use App\Service\cachce\SimpleCacheService;
+use App\Service\Counter\ICounterService;
+use App\Service\Counter\SimpleCounterService;
+use App\Service\ProductService;
+use PHPUnit\Framework\TestCase;
 
-class ProductServiceTest extends TestCase
+class BigApplicationTest extends TestCase
 {
     private string $cacheFile;
+    private string $counterFile;
     private IElasticSearchDriver $elasticSearchDriver;
     private IMySQLDriver $mySQLDriver;
     private ICacheService $cacheService;
+    private ICounterService $counterService;
 
     protected function setUp(): void
     {
         $this->cacheFile = __DIR__ . DIRECTORY_SEPARATOR . '..'.DIRECTORY_SEPARATOR .'product_cache_test.json';
+        $this->counterFile = __DIR__ . DIRECTORY_SEPARATOR . '..'.DIRECTORY_SEPARATOR .'product_counter_test.json';
 
         // Clean up before each test
         if (file_exists($this->cacheFile)) {
@@ -31,6 +36,7 @@ class ProductServiceTest extends TestCase
         $this->elasticSearchDriver = new ElasticDriver();
         $this->mySQLDriver = new MySQLDriver();
         $this->cacheService = new SimpleCacheService($this->cacheFile);
+        $this->counterService = new SimpleCounterService($this->counterFile);
     }
 
     public function testFindProductByIdUsesElasticSearch(): void
@@ -39,6 +45,7 @@ class ProductServiceTest extends TestCase
             $this->elasticSearchDriver,
             $this->mySQLDriver,
             $this->cacheService,
+            $this->counterService,
             '100'
         );
 
@@ -65,6 +72,7 @@ class ProductServiceTest extends TestCase
             $this->elasticSearchDriver,
             $this->mySQLDriver,
             $this->cacheService,
+            $this->counterService,
             '0'
         );
 

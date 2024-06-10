@@ -5,6 +5,8 @@ namespace App\Service;
 use App\Driver\IElasticSearchDriver;
 use App\Driver\IMySQLDriver;
 use App\Entity\Product;
+use App\Service\cachce\ICacheService;
+use App\Service\Counter\ICounterService;
 
 class ProductService
 {
@@ -12,6 +14,7 @@ class ProductService
         private IElasticSearchDriver $elasticSearchDriver,
         private IMySQLDriver $mySQLDriver,
         private ICacheService $cacheService,
+        private ICounterService $counterService,
         private string $elasticSearchPercentage,
     )
     {
@@ -31,7 +34,7 @@ class ProductService
         } else {
             $product = $this->mySQLDriver->findProduct($id);
         }
-        // Save product to cache
+        $this->counterService->incrementSearchCount($id);
         $this->cacheService->saveProduct($id, $product);
 
         return $product;
