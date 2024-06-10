@@ -15,7 +15,7 @@ use App\Service\Counter\SimpleCounterService;
 use App\Service\ProductService;
 use PHPUnit\Framework\TestCase;
 
-class ProductControllerTest extends TestCase
+final class ProductControllerTest extends TestCase
 {
     private string $cacheFile;
     private string $counterFile;

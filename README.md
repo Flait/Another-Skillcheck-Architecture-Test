@@ -1,6 +1,7 @@
 # Another-Skillcheck-Architecture-Test
 This is skillcheck for some company, focus is on OOP being prepared to switch for better technologies just by writing the clients/services.
 
+To check how I handle docker, github actions and other stuff checkout my other repositories.
 
 **Features:**
 - Elastic & Mysql magic Drivers (These always return something to not deal with not found cases in this test)
