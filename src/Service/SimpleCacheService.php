@@ -16,10 +16,13 @@ class SimpleCacheService implements ICacheService
         if (!file_exists($this->cacheFile)) {
             return null;
         }
+        if (!is_string($fileContent = file_get_contents($this->cacheFile))) {
+            throw new Exception('Couldnt get cache file');
+        }
 
-        $data = json_decode(file_get_contents($this->cacheFile), true);
+        $data = json_decode($fileContent, true);
 
-        if (isset($data[$id])) {
+        if (is_array($data) && isset($data[$id])) {
             return new Product($data[$id]);
         }
 
@@ -29,9 +32,11 @@ class SimpleCacheService implements ICacheService
     public function saveProduct(string $id, Product $product): void
     {
         $data = [];
-
+        if (!is_string($fileContent = file_get_contents($this->cacheFile))) {
+            throw new Exception('Couldnt get cache file');
+        }
         if (file_exists($this->cacheFile)) {
-            $data = json_decode(file_get_contents($this->cacheFile), true);
+            $data = json_decode($fileContent, true);
             if (!is_array($data)) {
                 $data = [];
             }
